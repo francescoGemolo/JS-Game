@@ -1,14 +1,30 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Game | Team Project</title>
 </head>
 
 <body>
+    <div id="game-container">
+        <div id="start-menu" class="overlay">
+        <h1>PRONTO A SALTARE?</h1>
+        <p>Premi SPAZIO o clicca START</p>
+        <button id="start-btn">GIOCA</button>
+    </div>
 
+    <div id="game-over-menu" class="overlay" style="display: none;">
+        <h1>HAI PERSO!</h1>
+        <p id="final-score">Punteggio: 0</p>
+        <button id="restart-btn">RIPROVA</button>
+    </div>
+    
+    <div id="player"></div>
+    </div>
 
     <script src="script.js"></script>
 </body>
