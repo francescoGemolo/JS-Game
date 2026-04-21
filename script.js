@@ -30,9 +30,10 @@ document.addEventListener("keydown", (event) => {
 });
 
 function initGame() {
-    // Reset stati
+    
     isGameOver = false;
     isStarted = true;
+    isJumping = false;
     
     // Gestione UI
     startMenu.style.display = "none";
@@ -44,6 +45,8 @@ function initGame() {
     
     // Reset posizione player
     player.style.bottom = "0px";
+
+    
     
     // Avvio logica ostacoli (con un piccolo delay di preparazione)
     clearTimeout(obstacleTimeout);
