@@ -3,14 +3,21 @@ const player = document.getElementById("player");
 const gameContainer = document.getElementById("game-container");
 const startMenu = document.getElementById("start-menu");
 const gameOverMenu = document.getElementById("game-over-menu");
+const finalScoreValue = document.getElementById("final-score");
 const startBtn = document.getElementById("start-btn");
 const restartBtn = document.getElementById("restart-btn");
+const timerDisplay = document.getElementById("timer");
+const scoreDisplay = document.getElementById("score");
+const finalScoreDisplay = document.getElementById("final-score");
 
 let isJumping = false;
 let isGameOver = false;
 let isStarted = false;
 let gravity = 1;
-let obstacleTimeout; // Per fermare la generazione futura di ostacoli
+let obstacleTimeout;
+let score = 0;
+let timeElapsed = 0;
+let gameInterval;
 
 // --- INIZIALIZZAZIONE E CONTROLLI ---
 
@@ -30,12 +37,15 @@ document.addEventListener("keydown", (event) => {
 });
 
 function initGame() {
-    
     isGameOver = false;
     isStarted = true;
     isJumping = false;
-    
-    // Gestione UI
+    score = 0;
+    timeElapsed = 0;
+
+    timerDisplay.innerText = timeElapsed;
+    scoreDisplay.innerText = score;
+
     startMenu.style.display = "none";
     gameOverMenu.style.display = "none";
     
@@ -46,11 +56,26 @@ function initGame() {
     // Reset posizione player
     player.style.bottom = "0px";
 
-    
-    
-    // Avvio logica ostacoli (con un piccolo delay di preparazione)
+    player.classList.remove("jumping"); 
+    player.style.transform = "";
+
+    clearInterval(gameInterval);
+    gameInterval = setInterval(updateScoreAndTime, 1000);
+
     clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, 1000);
+    
+}
+
+function updateScoreAndTime() {
+    if (!isGameOver && isStarted) {
+        timeElapsed++;
+        score += 10;
+        
+        // Usiamo i riferimenti costanti: molto più veloce!
+        timerDisplay.innerText = timeElapsed;
+        scoreDisplay.innerText = score;
+    }
 }
 
 // --- LOGICA DEL SALTO ---
@@ -58,6 +83,10 @@ function jump() {
     isJumping = true;
     let position = 0;
     let velocity = 15;
+
+    player.classList.remove("jumping")
+    player.style.transform = "";
+    void player.offsetWidth;
     player.classList.add("jumping");
 
     let timerId = setInterval(function () {
@@ -137,6 +166,8 @@ function gameOver() {
     
     // Blocca la generazione di nuovi ostacoli
     clearTimeout(obstacleTimeout);
+
+    finalScoreValue.innerText = `Your Score: ${score}`;
     
     // Mostra Menu di Game Over
     gameOverMenu.style.display = "flex";

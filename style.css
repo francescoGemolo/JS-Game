@@ -1,7 +1,31 @@
+body{
+    background-color:black;
+}
+
+#header-gioco {
+    margin: 0 auto;
+    margin: auto;
+    width: 600px; /* Stessa larghezza del game-container */
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #2f3542;
+    color: white;
+    font-family: Arial, sans-serif;
+    border-radius: 10px 10px 0 0; /* Arrotonda solo gli angoli superiori */
+    box-sizing: border-box;
+}
+
+#header-gioco span {
+    font-weight: bold;
+    color: #ff4757;
+}
+
 #game-container {
     width: 600px;
     height: 200px;
     border-bottom: 2px solid #555;
+    background-color: aliceblue;
     margin: 50px auto;
     position: relative;
     overflow: hidden;
@@ -15,11 +39,12 @@
     bottom: 0;
     left: 50px;
     transform-origin: center center;
+    transform: rotate(0deg);
 }
 
 #player.jumping {
     transition: transform 0.6s ease-out;
-    transform: rotate(360deg); /* Ruota di un giro completo */
+    transform: rotate(360deg);
 }
 
 .obstacle {
