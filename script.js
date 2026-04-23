@@ -1,4 +1,3 @@
-// --- VARIABILI DI STATO E RIFERIMENTI ---
 const player = document.getElementById("player");
 const gameContainer = document.getElementById("game-container");
 const startMenu = document.getElementById("start-menu");
@@ -26,13 +25,9 @@ let gameInterval;
 let lives = 3;
 let isInvulnerable = false;
 
-// --- INIZIALIZZAZIONE E CONTROLLI ---
-
-// Avvia il gioco dai bottoni
 startBtn.addEventListener("click", initGame);
 restartBtn.addEventListener("click", initGame);
 
-// Gestione tastiera (Salto e Start)
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         if (!isStarted) {
@@ -42,6 +37,15 @@ document.addEventListener("keydown", (event) => {
         }
     }
 });
+
+document.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    if (!isStarted) {
+        initGame();
+    } else if (!isJumping && !isGameOver) {
+        jump();
+    }
+}, { passive: false });
 
 function initGame() {
     isGameOver = false;
@@ -60,15 +64,13 @@ function initGame() {
 
     startMenu.style.display = "none";
     gameOverMenu.style.display = "none";
-    
-    // Pulizia campo da vecchi ostacoli
+
     const obstacles = document.querySelectorAll('.obstacle');
     obstacles.forEach(obs => obs.remove());
-    
-    // Reset posizione player
+
     player.style.bottom = "0px";
 
-    player.classList.remove("jumping"); 
+    player.classList.remove("jumping");
     player.style.transform = "";
 
     clearInterval(gameInterval);
@@ -76,20 +78,18 @@ function initGame() {
 
     clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, 1000);
-    
 }
 
 function updateScoreAndTime() {
     if (!isGameOver && isStarted) {
         timeElapsed++;
         score += 10;
-        
+
         timerDisplay.innerText = timeElapsed;
         scoreDisplay.innerText = score;
     }
 }
 
-// --- LOGICA DEL SALTO ---
 function jump() {
     isJumping = true;
     let position = 0;
@@ -101,7 +101,6 @@ function jump() {
     player.classList.add("jumping");
 
     let timerId = setInterval(function () {
-        // Se il gioco finisce mentre stiamo saltando, fermiamo il timer
         if (isGameOver) {
             clearInterval(timerId);
             return;
@@ -120,7 +119,6 @@ function jump() {
     }, 20);
 }
 
-// --- LOGICA OSTACOLI E COLLISIONE ---
 function createObstacle() {
     if (isGameOver || !isStarted) return;
 
@@ -128,15 +126,14 @@ function createObstacle() {
     obstacle.classList.add('obstacle');
     gameContainer.appendChild(obstacle);
 
-    // Randomizzazione forma
     let randomHeight = Math.floor(Math.random() * (60 - 20 + 1)) + 20;
     let randomWidth = Math.floor(Math.random() * (40 - 15 + 1)) + 15;
     obstacle.style.height = randomHeight + 'px';
     obstacle.style.width = randomWidth + 'px';
-    
+
     let obstaclePosition = 600;
 
-    let moveTimerId = setInterval(function() {
+    let moveTimerId = setInterval(function () {
         if (isGameOver) {
             clearInterval(moveTimerId);
             return;
@@ -148,8 +145,8 @@ function createObstacle() {
         let playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
 
         if (
-            obstaclePosition > (50 - randomWidth) && 
-            obstaclePosition < 100 && 
+            obstaclePosition > (50 - randomWidth) &&
+            obstaclePosition < 100 &&
             playerBottom < randomHeight
         ) {
             if (!isInvulnerable) {
@@ -157,21 +154,19 @@ function createObstacle() {
             }
         }
 
-        // Rimozione ostacolo uscito a sinistra
         if (obstaclePosition < -50) {
             clearInterval(moveTimerId);
             obstacle.remove();
         }
     }, 20);
 
-    // Programma il prossimo ostacolo (tempo casuale)
     let randomTime = Math.random() * (2500 - 1000) + 1000;
     obstacleTimeout = setTimeout(createObstacle, randomTime);
 }
 
 function takeDamage() {
     lives--;
-    
+
     if (hearts[lives]) {
         hearts[lives].style.display = "none";
     }
@@ -189,16 +184,13 @@ function takeDamage() {
     }
 }
 
-// --- FINE GIOCO ---
 function gameOver() {
     isGameOver = true;
     isStarted = false;
-    
-    // Blocca la generazione di nuovi ostacoli
+
     clearTimeout(obstacleTimeout);
 
     finalScoreValue.innerText = `Your Score: ${score}`;
-    
-    // Mostra Menu di Game Over
+
     gameOverMenu.style.display = "flex";
 }
