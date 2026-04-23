@@ -1,6 +1,6 @@
 # JS-Game
 
-[Live Demo](https://francescogemolo.github.io/JS-Calculator/)
+[Live Demo](#)
 
 A simple browser-based jumping game built with vanilla JavaScript, HTML, and CSS. Inspired by the Chrome T-Rex game, the player must jump over randomly generated obstacles to survive as long as possible.
 
@@ -29,8 +29,6 @@ The game runs entirely through a set of functions and intervals, with no externa
 **Scoring** uses a `setInterval` that fires every second, incrementing both the time and the score by 10 points.
 
 **Pause** stops both intervals (`gameInterval` and the obstacle spawn `setTimeout`) and records the exact timestamp. On resume, it calculates how much time was remaining before the next obstacle was due and restores it precisely.
-
-## Team
 
 ## Team
 - [Francesco](https://github.com/francescoGemolo)
