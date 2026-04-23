@@ -9,25 +9,25 @@
 </head>
 
 <body>
-    <div id="header-gioco">
+    <div class="header-gioco" id="header-gioco">
         <div>Tempo: <span id="timer">0</span>s</div>
         <div>Punteggio: <span id="score">0</span></div>
     </div>
 
-    <div id="game-container">
-        <div id="start-menu" class="overlay">
+    <div class="game-container" id="game-container">
+        <div id="start-menu" class="overlay-menu">
             <h1>PRONTO A SALTARE?</h1>
             <p>Premi SPAZIO o clicca START</p>
             <button id="start-btn">GIOCA</button>
         </div>
 
-        <div id="game-over-menu" class="overlay" style="display: none;">
+        <div id="game-over-menu" class="overlay-menu" style="display: none;">
             <h1>HAI PERSO!</h1>
             <p id="final-score">Punteggio: 0</p>
             <button id="restart-btn">RIPROVA</button>
         </div>
 
-        <div id="player"></div>
+        <div class="player" id="player"></div>
     </div>
 
 
