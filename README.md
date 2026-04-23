@@ -31,6 +31,6 @@ The game runs entirely through a set of functions and intervals, with no externa
 **Pause** stops both intervals (`gameInterval` and the obstacle spawn `setTimeout`) and records the exact timestamp. On resume, it calculates how much time was remaining before the next obstacle was due and restores it precisely.
 
 ## Team
-- [Francesco](https://github.com/francescoGemolo)
 - [Daniele](https://github.com/DanieleLG90)
+- [Francesco](https://github.com/francescoGemolo)
 - [Paula](https://github.com/PaulaBCdev)
