@@ -9,6 +9,11 @@ const restartBtn = document.getElementById("restart-btn");
 const timerDisplay = document.getElementById("timer");
 const scoreDisplay = document.getElementById("score");
 const finalScoreDisplay = document.getElementById("final-score");
+const hearts = [
+    document.getElementById("heart1"),
+    document.getElementById("heart2"),
+    document.getElementById("heart3")
+];
 
 let isJumping = false;
 let isGameOver = false;
@@ -18,6 +23,8 @@ let obstacleTimeout;
 let score = 0;
 let timeElapsed = 0;
 let gameInterval;
+let lives = 3;
+let isInvulnerable = false;
 
 // --- INIZIALIZZAZIONE E CONTROLLI ---
 
@@ -42,6 +49,11 @@ function initGame() {
     isJumping = false;
     score = 0;
     timeElapsed = 0;
+    lives = 3;
+    isInvulnerable = false;
+
+    player.classList.remove("invulnerable");
+    hearts.forEach(heart => heart.style.display = "inline");
 
     timerDisplay.innerText = timeElapsed;
     scoreDisplay.innerText = score;
@@ -72,7 +84,6 @@ function updateScoreAndTime() {
         timeElapsed++;
         score += 10;
         
-        // Usiamo i riferimenti costanti: molto più veloce!
         timerDisplay.innerText = timeElapsed;
         scoreDisplay.innerText = score;
     }
@@ -134,17 +145,16 @@ function createObstacle() {
         obstaclePosition -= 10;
         obstacle.style.left = obstaclePosition + 'px';
 
-        // Hitbox del player (X: 50 a 100)
         let playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
 
-        // Controllo Collisione
         if (
             obstaclePosition > (50 - randomWidth) && 
             obstaclePosition < 100 && 
             playerBottom < randomHeight
         ) {
-            gameOver();
-            clearInterval(moveTimerId);
+            if (!isInvulnerable) {
+                takeDamage();
+            }
         }
 
         // Rimozione ostacolo uscito a sinistra
@@ -157,6 +167,26 @@ function createObstacle() {
     // Programma il prossimo ostacolo (tempo casuale)
     let randomTime = Math.random() * (2500 - 1000) + 1000;
     obstacleTimeout = setTimeout(createObstacle, randomTime);
+}
+
+function takeDamage() {
+    lives--;
+    
+    if (hearts[lives]) {
+        hearts[lives].style.display = "none";
+    }
+
+    if (lives <= 0) {
+        gameOver();
+    } else {
+        isInvulnerable = true;
+        player.classList.add("invulnerable");
+
+        setTimeout(() => {
+            isInvulnerable = false;
+            player.classList.remove("invulnerable");
+        }, 1500);
+    }
 }
 
 // --- FINE GIOCO ---

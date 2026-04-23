@@ -49,6 +49,19 @@ body{
     transform: rotate(360deg);
 }
 
+@keyframes lampeggio-invulnerabile {
+    0% { opacity: 1; }      
+    50% { opacity: 0.1; } 
+    100% { opacity: 1; }
+}
+
+.invulnerable {
+    animation-name: lampeggio-invulnerabile;
+    animation-duration: 0.2s; 
+    animation-iteration-count: infinite; 
+    animation-timing-function: ease-in-out; 
+}
+
 .obstacle {
     width: 20px;
     height: 40px;
