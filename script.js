@@ -130,13 +130,15 @@ function togglePause() {
     const icon = pauseBtn.querySelector("i");
 
     if (isPaused) {
-        icon.className = "hgi hgi-play";
+        icon.className = "hgi hgi-stroke hgi-rounded hgi-play";
+
         clearInterval(gameInterval);
         clearTimeout(obstacleTimeout);
         pauseTime = Date.now();
         pauseMenu.style.display = "flex";
     } else {
-        icon.className = "hgi hgi-pause";
+        icon.className = "hgi hgi-stroke hgi-rounded hgi-pause";
+
         gameInterval = setInterval(updateScoreAndTime, 1000);
 
         const remaining = Math.max(0, pausedObstacleTimeRemaining - (Date.now() - pauseTime));
