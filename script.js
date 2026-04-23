@@ -19,6 +19,17 @@ const hearts = [
     document.getElementById("heart3")
 ];
 
+let isMuted = false;
+const jumpSound = new Audio('sound/jump-sound.wav');
+const damageSound = new Audio('sound/hit-sound.wav'); 
+const backgroundMusic = new Audio('sound/bg-music.mp3');
+
+backgroundMusic.preload = 'auto';
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.3;
+jumpSound.volume = 0.6;
+damageSound.volume = 0.8;
+
 let isJumping = false;
 let isGameOver = false;
 let isStarted = false;
@@ -110,6 +121,8 @@ function initGame() {
 
     clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, 1000);
+
+    backgroundMusic.play();
 }
 
 function togglePause() {
@@ -179,6 +192,11 @@ function jump() {
 
         player.style.bottom = position + "px";
     }, 20);
+
+    if (!isMuted) {
+        jumpSound.currentTime = 0;
+        jumpSound.play();
+    }
 }
 
 function createObstacle() {
@@ -249,6 +267,11 @@ function takeDamage() {
             player.classList.remove("invulnerable");
         }, 1500);
     }
+
+    if (!isMuted) {
+        damageSound.currentTime = 0;
+        damageSound.play();
+    }
 }
 
 function gameOver() {
@@ -259,4 +282,17 @@ function gameOver() {
 
     finalScoreValue.innerText = `Your Score: ${score}`;
     gameOverMenu.style.display = "flex";
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+
+    if (isMuted) {
+        backgroundMusic.pause();
+    } else {
+        if (isStarted && !isGameOver) {
+            backgroundMusic.play().catch(err => console.log("Audio in attesa di interazione"));
+        }
+    }
+    return isMuted;
 }
