@@ -1,4 +1,3 @@
-// --- VARIABILI DI STATO E RIFERIMENTI ---
 const player = document.getElementById("player");
 const gameContainer = document.getElementById("game-container");
 const startMenu = document.getElementById("start-menu");
@@ -29,13 +28,9 @@ let isInvulnerable = false;
 let gameSpeed = 10;
 let obstacleInterval = 2500;
 
-// --- INIZIALIZZAZIONE E CONTROLLI ---
-
-// Avvia il gioco dai bottoni
 startBtn.addEventListener("click", initGame);
 restartBtn.addEventListener("click", initGame);
 
-// Gestione tastiera (Salto e Start)
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         if (!isStarted) {
@@ -65,15 +60,13 @@ function initGame() {
 
     startMenu.style.display = "none";
     gameOverMenu.style.display = "none";
-    
-    // Pulizia campo da vecchi ostacoli
+
     const obstacles = document.querySelectorAll('.obstacle');
     obstacles.forEach(obs => obs.remove());
-    
-    // Reset posizione player
+
     player.style.bottom = "0px";
 
-    player.classList.remove("jumping"); 
+    player.classList.remove("jumping");
     player.style.transform = "";
 
     clearInterval(gameInterval);
@@ -81,40 +74,38 @@ function initGame() {
 
     clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, 1000);
-    
 }
 
 function updateScoreAndTime() {
     if (!isGameOver && isStarted) {
         timeElapsed++;
         score += 10;
-        
+
         timerDisplay.innerText = timeElapsed;
         scoreDisplay.innerText = score;
 
-        if (score % 100 === 0) {    
-            gameSpeed += 1.5; 
-    
+        if (score % 100 === 0) {
+            gameSpeed += 1.5;
+
             if (obstacleInterval > 700) {
-                obstacleInterval -= 200; 
+                obstacleInterval -= 200;
             }
             console.log("TEST DIFFICOLTÀ ATTIVO");
         }
     }
 }
-// --- LOGICA DEL SALTO ---
+
 function jump() {
     isJumping = true;
     let position = 0;
     let velocity = 15;
 
-    player.classList.remove("jumping")
+    player.classList.remove("jumping");
     player.style.transform = "";
     void player.offsetWidth;
     player.classList.add("jumping");
 
     let timerId = setInterval(function () {
-        // Se il gioco finisce mentre stiamo saltando, fermiamo il timer
         if (isGameOver) {
             clearInterval(timerId);
             return;
@@ -144,22 +135,22 @@ function createObstacle() {
     let randomWidth = Math.floor(Math.random() * (40 - 15 + 1)) + 15;
     obstacle.style.height = randomHeight + 'px';
     obstacle.style.width = randomWidth + 'px';
-    
+
     let obstaclePosition = 600;
 
-    let moveTimerId = setInterval(function() {
+    let moveTimerId = setInterval(function () {
         if (isGameOver) {
             clearInterval(moveTimerId);
             return;
         }
-        obstaclePosition -= gameSpeed; 
+        obstaclePosition -= gameSpeed;
         obstacle.style.left = obstaclePosition + 'px';
 
         let playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
 
         if (
-            obstaclePosition > (50 - randomWidth) && 
-            obstaclePosition < 100 && 
+            obstaclePosition > (50 - randomWidth) &&
+            obstaclePosition < 100 &&
             playerBottom < randomHeight
         ) {
             if (!isInvulnerable) {
@@ -177,14 +168,14 @@ function createObstacle() {
     if (minTime < 400) minTime = 400;
 
     let randomTime = Math.random() * (obstacleInterval - minTime) + minTime;
-    
+
     if (typeof obstacleTimeout !== 'undefined') clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, randomTime);
 }
 
 function takeDamage() {
     lives--;
-    
+
     if (hearts[lives]) {
         hearts[lives].style.display = "none";
     }
@@ -202,16 +193,13 @@ function takeDamage() {
     }
 }
 
-// --- FINE GIOCO ---
 function gameOver() {
     isGameOver = true;
     isStarted = false;
-    
-    // Blocca la generazione di nuovi ostacoli
+
     clearTimeout(obstacleTimeout);
 
     finalScoreValue.innerText = `Your Score: ${score}`;
-    
-    // Mostra Menu di Game Over
+
     gameOverMenu.style.display = "flex";
 }
