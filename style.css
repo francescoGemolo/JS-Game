@@ -38,38 +38,49 @@ button:focus-visible {
 }
 
 body {
-    background-color: #111827;
-    font-family: 'Space Mono', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-weight: normal;
+    background-color: var(--color-bg);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .header-game {
-    margin: 0 auto;
-    margin-top: 4rem;
     width: 600px;
     display: flex;
     justify-content: space-between;
-    padding: 1rem 1.25rem;
-    background-color: #1f2937;
-    color: #f9fafb;
-    border-radius: 0.625rem 0.625rem 0 0;
-    box-sizing: border-box;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header-game span {
-    color: #ff4757;
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+#lives-container {
+    display: flex;
+    gap: 0.25rem;
+    font-size: 1rem;
 }
 
 .game-container {
     width: 600px;
     height: 200px;
-    background-color: #f3f4f6;
-    margin: 0 auto;
+    background-color: var(--color-surface-alt);
     position: relative;
     overflow: hidden;
-    border-radius: 0 0 0.625rem 0.625rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 .player {
