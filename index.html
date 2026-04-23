@@ -4,43 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Game | Team Project</title>
+
+    <meta name="description"
+        content="A fast-paced jumping game where you dodge obstacles, collect points, and survive as long as you can. How high can you score?">
+    <meta name="authors" content="Daniele, Francesco, Paula">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         rel="stylesheet">
+
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css">
+
     <link rel="stylesheet" href="style.css">
-    <title>Game | Team Project</title>
 </head>
 
 <body>
-    <div class="header-gioco" id="header-gioco">
-        <div>Time: <span id="timer">0</span>s</div>
+    <main>
+        <header class="header-game" id="header-game">
+            <div>Time: <span id="timer">0</span>s</div>
 
-        <div id="lives-container">
-            <span id="heart1">❤️</span>
-            <span id="heart2">❤️</span>
-            <span id="heart3">❤️</span>
+            <div id="lives-container">
+                <span id="heart1">❤️</span>
+                <span id="heart2">❤️</span>
+                <span id="heart3">❤️</span>
+            </div>
+
+            <div>Score: <span id="score">0</span></div>
+        </header>
+
+        <div class="game-container" id="game-container">
+            <div id="start-menu" class="overlay-menu">
+                <h1>READY TO JUMP?</h1>
+                <p>Press SPACE or click START</p>
+                <button id="start-btn">START</button>
+            </div>
+
+            <div id="game-over-menu" class="overlay-menu" style="display: none;">
+                <h1>GAME OVER!</h1>
+                <p id="final-score">Score: 0</p>
+                <button id="restart-btn">TRY AGAIN</button>
+            </div>
+
+            <div class="player" id="player"></div>
         </div>
-
-        <div>Score: <span id="score">0</span></div>
-    </div>
-
-    <div class="game-container" id="game-container">
-        <div id="start-menu" class="overlay-menu">
-            <h1>READY TO JUMP?</h1>
-            <p>Press SPACE or click START</p>
-            <button id="start-btn">START</button>
-        </div>
-
-        <div id="game-over-menu" class="overlay-menu" style="display: none;">
-            <h1>GAME OVER!</h1>
-            <p id="final-score">Score: 0</p>
-            <button id="restart-btn">TRY AGAIN</button>
-        </div>
-
-        <div class="player" id="player"></div>
-    </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
