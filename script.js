@@ -21,10 +21,13 @@ let isStarted = false;
 let gravity = 1;
 let obstacleTimeout;
 let score = 0;
+let timer = 0;
 let timeElapsed = 0;
 let gameInterval;
 let lives = 3;
 let isInvulnerable = false;
+let gameSpeed = 10;
+let obstacleInterval = 2500;
 
 // --- INIZIALIZZAZIONE E CONTROLLI ---
 
@@ -51,6 +54,8 @@ function initGame() {
     timeElapsed = 0;
     lives = 3;
     isInvulnerable = false;
+    gameSpeed = 10;
+    obstacleInterval = 2500;
 
     player.classList.remove("invulnerable");
     hearts.forEach(heart => heart.style.display = "inline");
@@ -86,9 +91,17 @@ function updateScoreAndTime() {
         
         timerDisplay.innerText = timeElapsed;
         scoreDisplay.innerText = score;
+
+        if (score % 100 === 0) {    
+            gameSpeed += 1.5; 
+    
+            if (obstacleInterval > 700) {
+                obstacleInterval -= 200; 
+            }
+            console.log("TEST DIFFICOLTÀ ATTIVO");
+        }
     }
 }
-
 // --- LOGICA DEL SALTO ---
 function jump() {
     isJumping = true;
@@ -120,7 +133,6 @@ function jump() {
     }, 20);
 }
 
-// --- LOGICA OSTACOLI E COLLISIONE ---
 function createObstacle() {
     if (isGameOver || !isStarted) return;
 
@@ -128,7 +140,6 @@ function createObstacle() {
     obstacle.classList.add('obstacle');
     gameContainer.appendChild(obstacle);
 
-    // Randomizzazione forma
     let randomHeight = Math.floor(Math.random() * (60 - 20 + 1)) + 20;
     let randomWidth = Math.floor(Math.random() * (40 - 15 + 1)) + 15;
     obstacle.style.height = randomHeight + 'px';
@@ -141,8 +152,7 @@ function createObstacle() {
             clearInterval(moveTimerId);
             return;
         }
-
-        obstaclePosition -= 10;
+        obstaclePosition -= gameSpeed; 
         obstacle.style.left = obstaclePosition + 'px';
 
         let playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
@@ -157,15 +167,18 @@ function createObstacle() {
             }
         }
 
-        // Rimozione ostacolo uscito a sinistra
         if (obstaclePosition < -50) {
             clearInterval(moveTimerId);
             obstacle.remove();
         }
     }, 20);
 
-    // Programma il prossimo ostacolo (tempo casuale)
-    let randomTime = Math.random() * (2500 - 1000) + 1000;
+    let minTime = obstacleInterval - 500;
+    if (minTime < 400) minTime = 400;
+
+    let randomTime = Math.random() * (obstacleInterval - minTime) + minTime;
+    
+    if (typeof obstacleTimeout !== 'undefined') clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, randomTime);
 }
 
