@@ -285,8 +285,8 @@ function gameOver() {
     finalScoreValue.innerText = `Your Score: ${score}`;
     gameOverMenu.style.display = "flex";
 }
-
-function toggleMute() {
+//funzione per mutare tutti i suoni da inserire nel event listener
+function muteMusic() {
     isMuted = !isMuted;
 
     if (isMuted) {
