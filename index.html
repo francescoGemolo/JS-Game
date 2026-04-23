@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Game | Team Project</title>
-
     <meta name="description"
         content="A fast-paced jumping game where you dodge obstacles, collect points, and survive as long as you can. How high can you score?">
-    <meta name="authors" content="Daniele, Francesco, Paula">
+    <meta name="author" content="Daniele, Francesco, Paula">
+
+    <title>Game | Team Project</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
 
 <body>
     <main>
-        <header class="header-game" id="header-game">
+        <div class="header-game" id="header-game" role="banner">
             <div>Time: <span id="timer">0</span>s</div>
 
             <div id="lives-container">
@@ -34,7 +34,7 @@
             </div>
 
             <div>Score: <span id="score">0</span></div>
-        </header>
+        </div>
 
         <div class="game-container" id="game-container">
             <div id="start-menu" class="overlay-menu">
