@@ -3,14 +3,16 @@ const gameContainer = document.getElementById("game-container");
 const startMenu = document.getElementById("start-menu");
 const gameOverMenu = document.getElementById("game-over-menu");
 const pauseMenu = document.getElementById("pause-menu");
+
 const finalScoreValue = document.getElementById("final-score");
 const startBtn = document.getElementById("start-btn");
 const restartBtn = document.getElementById("restart-btn");
 const resumeBtn = document.getElementById("resume-btn");
+const pauseBtn = document.getElementById("pause-btn");
+
 const timerDisplay = document.getElementById("timer");
 const scoreDisplay = document.getElementById("score");
-const finalScoreDisplay = document.getElementById("final-score");
-const pauseBtn = document.getElementById("pause-btn");
+
 const hearts = [
     document.getElementById("heart1"),
     document.getElementById("heart2"),
@@ -21,49 +23,50 @@ let isJumping = false;
 let isGameOver = false;
 let isStarted = false;
 let isPaused = false;
+
 let gravity = 1;
 let obstacleTimeout;
+
 let score = 0;
 let timeElapsed = 0;
 let gameInterval;
+
 let lives = 3;
 let isInvulnerable = false;
+
+let gameSpeed = 10;
+let obstacleInterval = 2500;
+
 let pausedObstacleTimeRemaining = 0;
 let pauseTime = null;
 
 startBtn.addEventListener("click", initGame);
 restartBtn.addEventListener("click", initGame);
+
 resumeBtn.addEventListener("click", () => {
-    if (!isPaused) return;
-    togglePause();
+    if (isPaused) togglePause();
 });
+
 pauseBtn.addEventListener("click", () => {
-    if (!isStarted || isGameOver) return;
-    togglePause();
+    if (isStarted && !isGameOver) togglePause();
 });
 
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         event.preventDefault();
-        if (!isStarted) {
-            initGame();
-        } else if (isPaused) {
-            togglePause();
-        } else if (!isJumping && !isGameOver) {
-            jump();
-        }
+
+        if (!isStarted) initGame();
+        else if (isPaused) togglePause();
+        else if (!isJumping && !isGameOver) jump();
     }
 });
 
 document.addEventListener("touchstart", (event) => {
     event.preventDefault();
-    if (!isStarted) {
-        initGame();
-    } else if (isPaused) {
-        togglePause();
-    } else if (!isJumping && !isGameOver) {
-        jump();
-    }
+
+    if (!isStarted) initGame();
+    else if (isPaused) togglePause();
+    else if (!isJumping && !isGameOver) jump();
 }, { passive: false });
 
 function initGame() {
@@ -71,17 +74,23 @@ function initGame() {
     isStarted = true;
     isJumping = false;
     isPaused = false;
+
     score = 0;
     timeElapsed = 0;
     lives = 3;
+
     isInvulnerable = false;
+
+    gameSpeed = 10;
+    obstacleInterval = 2500;
+
     pausedObstacleTimeRemaining = 0;
     pauseTime = null;
 
     pauseBtn.querySelector("i").className = "hgi hgi-stroke hgi-rounded hgi-pause";
-    pauseBtn.setAttribute("aria-label", "Pausa");
+
     player.classList.remove("invulnerable");
-    hearts.forEach(heart => heart.style.display = "inline");
+    hearts.forEach(h => h.style.display = "inline");
 
     timerDisplay.innerText = timeElapsed;
     scoreDisplay.innerText = score;
@@ -90,7 +99,7 @@ function initGame() {
     gameOverMenu.style.display = "none";
     pauseMenu.style.display = "none";
 
-    document.querySelectorAll(".obstacle").forEach(obs => obs.remove());
+    document.querySelectorAll(".obstacle").forEach(o => o.remove());
 
     player.style.bottom = "0px";
     player.classList.remove("jumping");
@@ -108,30 +117,38 @@ function togglePause() {
     const icon = pauseBtn.querySelector("i");
 
     if (isPaused) {
-        icon.className = "hgi hgi-stroke hgi-rounded hgi-play";
-        pauseBtn.setAttribute("aria-label", "Riprendi");
-        pauseBtn.blur();
+        icon.className = "hgi hgi-play";
         clearInterval(gameInterval);
         clearTimeout(obstacleTimeout);
         pauseTime = Date.now();
         pauseMenu.style.display = "flex";
     } else {
-        icon.className = "hgi hgi-stroke hgi-rounded hgi-pause";
-        pauseBtn.setAttribute("aria-label", "Pausa");
+        icon.className = "hgi hgi-pause";
         gameInterval = setInterval(updateScoreAndTime, 1000);
+
         const remaining = Math.max(0, pausedObstacleTimeRemaining - (Date.now() - pauseTime));
         obstacleTimeout = setTimeout(createObstacle, remaining);
+
         pauseTime = null;
         pauseMenu.style.display = "none";
     }
 }
 
 function updateScoreAndTime() {
-    if (!isGameOver && isStarted) {
+    if (!isGameOver && isStarted && !isPaused) {
         timeElapsed++;
         score += 10;
+
         timerDisplay.innerText = timeElapsed;
         scoreDisplay.innerText = score;
+
+        if (score % 100 === 0) {
+            gameSpeed += 1.5;
+
+            if (obstacleInterval > 700) {
+                obstacleInterval -= 200;
+            }
+        }
     }
 }
 
@@ -141,11 +158,10 @@ function jump() {
     let velocity = 15;
 
     player.classList.remove("jumping");
-    player.style.transform = "";
     void player.offsetWidth;
     player.classList.add("jumping");
 
-    let timerId = setInterval(function () {
+    let timerId = setInterval(() => {
         if (isGameOver || isPaused) {
             clearInterval(timerId);
             return;
@@ -160,6 +176,7 @@ function jump() {
             position = 0;
             player.classList.remove("jumping");
         }
+
         player.style.bottom = position + "px";
     }, 20);
 }
@@ -171,14 +188,15 @@ function createObstacle() {
     obstacle.classList.add("obstacle");
     gameContainer.appendChild(obstacle);
 
-    let randomHeight = Math.floor(Math.random() * (60 - 20 + 1)) + 20;
-    let randomWidth = Math.floor(Math.random() * (40 - 15 + 1)) + 15;
+    let randomHeight = Math.floor(Math.random() * 40) + 20;
+    let randomWidth = Math.floor(Math.random() * 25) + 15;
+
     obstacle.style.height = randomHeight + "px";
     obstacle.style.width = randomWidth + "px";
 
     let obstaclePosition = 600;
 
-    let moveTimerId = setInterval(function () {
+    let moveTimerId = setInterval(() => {
         if (isGameOver) {
             clearInterval(moveTimerId);
             return;
@@ -186,19 +204,18 @@ function createObstacle() {
 
         if (isPaused) return;
 
-        obstaclePosition -= 10;
+        obstaclePosition -= gameSpeed;
+
         obstacle.style.left = obstaclePosition + "px";
 
-        let playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
+        let playerBottom = parseInt(getComputedStyle(player).bottom);
 
         if (
             obstaclePosition > (50 - randomWidth) &&
             obstaclePosition < 100 &&
             playerBottom < randomHeight
         ) {
-            if (!isInvulnerable) {
-                takeDamage();
-            }
+            if (!isInvulnerable) takeDamage();
         }
 
         if (obstaclePosition < -50) {
@@ -207,17 +224,19 @@ function createObstacle() {
         }
     }, 20);
 
-    let randomTime = Math.random() * (2500 - 1000) + 1000;
+    let minTime = Math.max(400, obstacleInterval - 500);
+    let randomTime = Math.random() * (obstacleInterval - minTime) + minTime;
+
     pausedObstacleTimeRemaining = randomTime;
+
+    clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, randomTime);
 }
 
 function takeDamage() {
     lives--;
 
-    if (hearts[lives]) {
-        hearts[lives].style.display = "none";
-    }
+    if (hearts[lives]) hearts[lives].style.display = "none";
 
     if (lives <= 0) {
         gameOver();
