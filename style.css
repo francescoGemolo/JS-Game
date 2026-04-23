@@ -86,10 +86,11 @@ body {
 .player {
     width: 50px;
     height: 50px;
-    background-color: #ff4757;
+    background-color: var(--color-accent);
     position: absolute;
     bottom: 0;
     left: 50px;
+    border-radius: 4px;
     transform-origin: center center;
     transform: rotate(0deg);
 }
@@ -114,19 +115,17 @@ body {
 }
 
 .invulnerable {
-    animation-name: lampeggio-invulnerabile;
-    animation-duration: 0.2s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
+    animation: lampeggio-invulnerabile 0.2s ease-in-out infinite;
 }
 
 .obstacle {
     width: 20px;
     height: 40px;
-    background-color: #2f3542;
+    background-color: var(--color-obstacle);
     position: absolute;
     bottom: 0;
     right: -20px;
+    border-radius: 3px 3px 0 0;
 }
 
 .overlay-menu {
