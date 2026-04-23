@@ -1,6 +1,6 @@
 # JS-Game
 
-![Game Preview](https://via.placeholder.com/600x300?text=JS-Game+Preview)
+[Live Demo](https://francescogemolo.github.io/JS-Calculator/)
 
 A simple browser-based jumping game built with vanilla JavaScript, HTML, and CSS. Inspired by the Chrome T-Rex game, the player must jump over randomly generated obstacles to survive as long as possible.
 
@@ -32,6 +32,7 @@ The game runs entirely through a set of functions and intervals, with no externa
 
 ## Team
 
-- **Daniele** - [GitHub](https://github.com/daniele)
-- **Francesco** - [GitHub](https://github.com/francesco)
-- **Paula** - [GitHub](https://github.com/paula)
+## Team
+- [Francesco](https://github.com/francescoGemolo)
+- [Daniele](https://github.com/DanieleLG90)
+- [Paula](https://github.com/PaulaBCdev)
