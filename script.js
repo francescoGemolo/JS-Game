@@ -123,7 +123,7 @@ document.addEventListener("touchstart", (event) => {
 }, { passive: false });
 
 function initGame() {
-    
+
     isGameOver = false;
     isStarted = true;
     isJumping = false;
