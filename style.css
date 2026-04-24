@@ -270,7 +270,7 @@ button:active {
     text-align: center;
 }
 
-.rotate-screen-overlay{
+.rotate-screen-overlay {
     font-size: 1.5rem;
 }
 
@@ -278,7 +278,7 @@ button:active {
     .rotate-screen-overlay {
         display: flex;
     }
-    
+
     .game-container, #ui-container {
         display: none;
     }
@@ -294,7 +294,6 @@ button:active {
 }
 
 @media (max-width: 640px) {
-
     .header-game,
     .game-container {
         width: 100%;
