@@ -40,6 +40,7 @@ let isInvulnerable = false;
 let gravity = 1;
 let obstacleTimeout;
 let gameInterval;
+let jumpTimerId = null;
 
 let score = 0;
 let timeElapsed = 0;
@@ -107,7 +108,6 @@ volumeBtn.addEventListener("click", () => {
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         event.preventDefault();
-
         if (!isStarted) initGame();
         else if (isPaused) togglePause();
         else if (!isJumping && !isGameOver) jump();
@@ -116,14 +116,12 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("touchstart", (event) => {
     event.preventDefault();
-
     if (!isStarted) initGame();
     else if (isPaused) togglePause();
     else if (!isJumping && !isGameOver) jump();
 }, { passive: false });
 
 function initGame() {
-
     isGameOver = false;
     isStarted = true;
     isJumping = false;
@@ -141,7 +139,7 @@ function initGame() {
     pauseBtn.querySelector("i").className = "hgi hgi-stroke hgi-rounded hgi-pause";
 
     player.classList.remove("invulnerable");
-    hearts.forEach(h => h.style.display = "inline");
+    hearts.forEach(h => h.style.visibility = "visible");
 
     timerDisplay.innerText = timeElapsed;
     scoreDisplay.innerText = score;
@@ -183,6 +181,11 @@ function togglePause() {
         backgroundMusic.pause();
         stopWalkCycle();
         setPlayerState('idle');
+
+        if (jumpTimerId) {
+            clearInterval(jumpTimerId);
+            jumpTimerId = null;
+        }
     } else {
         icon.className = "hgi hgi-stroke hgi-rounded hgi-pause";
         gameInterval = setInterval(updateScoreAndTime, 1000);
@@ -191,7 +194,12 @@ function togglePause() {
         pauseTime = null;
         pauseMenu.style.display = "none";
         if (!isMuted) backgroundMusic.play().catch(() => { });
-        startWalkCycle();
+
+        if (isJumping) {
+            continueJump();
+        } else {
+            startWalkCycle();
+        }
     }
 }
 
@@ -221,9 +229,10 @@ function jump() {
 
     setPlayerState('jump');
 
-    let timerId = setInterval(() => {
+    jumpTimerId = setInterval(() => {
         if (isGameOver || isPaused) {
-            clearInterval(timerId);
+            clearInterval(jumpTimerId);
+            jumpTimerId = null;
             return;
         }
 
@@ -231,7 +240,8 @@ function jump() {
         velocity -= gravity;
 
         if (position <= 0) {
-            clearInterval(timerId);
+            clearInterval(jumpTimerId);
+            jumpTimerId = null;
             isJumping = false;
             position = 0;
             player.classList.remove("jumping");
@@ -244,6 +254,38 @@ function jump() {
 
     jumpSound.currentTime = 0;
     jumpSound.play().catch(() => { });
+}
+
+function continueJump() {
+    const currentBottom = parseInt(player.style.bottom) || 0;
+    let position = currentBottom;
+    let velocity = -Math.sqrt(2 * gravity * Math.max(0, currentBottom));
+
+    setPlayerState('jump');
+
+    jumpTimerId = setInterval(() => {
+        if (isGameOver || isPaused) {
+            clearInterval(jumpTimerId);
+            jumpTimerId = null;
+            return;
+        }
+
+        position += velocity;
+        velocity -= gravity;
+
+        if (position <= 0) {
+            clearInterval(jumpTimerId);
+            jumpTimerId = null;
+            isJumping = false;
+            position = 0;
+            player.classList.remove("jumping");
+            walkFrame = false;
+            setPlayerState('walk-a');
+            startWalkCycle();
+        }
+
+        player.style.bottom = position + "px";
+    }, 20);
 }
 
 function createObstacle() {
@@ -300,7 +342,7 @@ function createObstacle() {
 function takeDamage() {
     lives--;
 
-    if (hearts[lives]) hearts[lives].style.display = "none";
+    if (hearts[lives]) hearts[lives].style.visibility = "hidden";
 
     damageSound.currentTime = 0;
     damageSound.play().catch(() => { });
@@ -350,7 +392,6 @@ const bgSpeed = 2;
 
 function moveBackground() {
     posX -= bgSpeed;
-
     l1.style.backgroundPositionX = (posX * 0.1) + "px";
     l2.style.backgroundPositionX = (posX * 0.4) + "px";
     l3.style.backgroundPositionX = (posX * 0.6) + "px";

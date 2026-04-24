@@ -12,18 +12,18 @@
 
 .layerBg {
     background-image: url('assets/background/bg-img.png');
-    filter: brightness(0.7);
+    filter: brightness(0.6);
     z-index: 1;
 }
 
 .layer2 {
     background-image: url('assets/background/bg-layer-01.png');
-    filter: brightness(0.7);
+    filter: brightness(0.6);
     z-index: 2;
 }
 
 .layer3 {
     background-image: url('assets/background/bg-layer-02.png');
-    filter: brightness(0.7);
+    filter: brightness(0.6);
     z-index: 3;
 }
