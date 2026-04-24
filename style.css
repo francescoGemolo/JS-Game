@@ -141,16 +141,13 @@ body {
 }
 
 .obstacle {
-    width: 20px;
-    height: 40px;
-    background-image: url('assets/game/block_green.png');
-    background-size: cover;
-    background-position: center;
     position: absolute;
     z-index: 8;
     bottom: 0;
     right: -20px;
-    border-radius: 3px 3px 0 0;
+    background-image: url('assets/game/block_green.png');
+    background-size: cover;
+    background-position: center;
 }
 
 .overlay-menu {
