@@ -1,6 +1,6 @@
 # JS-Game
 
-[Live Demo](https://github.com/francescoGemolo/JS-Game)
+[Preview Link](https://francescogemolo.github.io/JS-Game/)
 
 A simple browser-based jumping game built with vanilla JavaScript, HTML, and CSS. Inspired by the Chrome T-Rex game, the player must jump over randomly generated obstacles to survive as long as possible.
 
