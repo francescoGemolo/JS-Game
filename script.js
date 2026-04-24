@@ -53,8 +53,24 @@ let pauseTime = null;
 let walkFrame = false;
 let walkInterval = null;
 
+const l1 = document.querySelector('.layerBg');
+const l2 = document.querySelector('.layer2');
+const l3 = document.querySelector('.layer3');
+
+let posX = 0;
+const bgSpeed = 2;
+
+// Player State
 function setPlayerState(state) {
-    player.className = "player state-" + state;
+    player.classList.remove(
+        "state-idle",
+        "state-walk-a",
+        "state-walk-b",
+        "state-jump",
+        "state-hit"
+    );
+
+    player.classList.add("state-" + state);
 }
 
 function startWalkCycle() {
@@ -72,6 +88,25 @@ function stopWalkCycle() {
     walkInterval = null;
 }
 
+// Parallax
+function moveBackground() {
+    if (!l1 || !l2 || !l3) return;
+
+    posX -= bgSpeed;
+
+    l1.style.backgroundPositionX = (posX * 0.1) + "px";
+    l2.style.backgroundPositionX = (posX * 0.4) + "px";
+    l3.style.backgroundPositionX = (posX * 0.6) + "px";
+}
+
+function animate() {
+    if (!isGameOver && isStarted && !isPaused) {
+        moveBackground();
+    }
+    requestAnimationFrame(animate);
+}
+
+// Events
 startBtn.addEventListener("click", initGame);
 restartBtn.addEventListener("click", initGame);
 
@@ -95,13 +130,16 @@ volumeBtn.addEventListener("click", () => {
     } else {
         jumpSound.volume = 0.3;
         damageSound.volume = 0.5;
-        if (isStarted && !isGameOver && !isPaused) {
+
+        if (isStarted && !isPaused && !isGameOver) {
             backgroundMusic.play().catch(() => { });
         }
+
         icon.className = "hgi hgi-stroke hgi-rounded hgi-volume-high";
     }
 });
 
+// Input
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         event.preventDefault();
@@ -120,6 +158,7 @@ document.addEventListener("touchstart", (event) => {
     else if (!isJumping && !isGameOver) jump();
 }, { passive: false });
 
+// Game Logic
 function initGame() {
     isGameOver = false;
     isStarted = true;
@@ -132,12 +171,10 @@ function initGame() {
     lives = 3;
     gameSpeed = 10;
     obstacleInterval = 2500;
-    pausedObstacleTimeRemaining = 0;
+
     pauseTime = null;
+    pausedObstacleTimeRemaining = 0;
 
-    pauseBtn.querySelector("i").className = "hgi hgi-stroke hgi-rounded hgi-pause";
-
-    player.classList.remove("invulnerable");
     hearts.forEach(h => h.style.visibility = "visible");
 
     timerDisplay.innerText = timeElapsed;
@@ -150,7 +187,6 @@ function initGame() {
     document.querySelectorAll(".obstacle").forEach(o => o.remove());
 
     player.style.bottom = "0px";
-    player.classList.remove("jumping");
 
     setPlayerState('idle');
     startWalkCycle();
@@ -162,33 +198,45 @@ function initGame() {
     obstacleTimeout = setTimeout(createObstacle, 1000);
 
     if (!isMuted) backgroundMusic.play().catch(() => { });
+
+    animate();
 }
 
+// Pause
 function togglePause() {
     isPaused = !isPaused;
     const icon = pauseBtn.querySelector("i");
 
     if (isPaused) {
         icon.className = "hgi hgi-stroke hgi-rounded hgi-play";
+
         clearInterval(gameInterval);
         clearTimeout(obstacleTimeout);
+
         pauseTime = Date.now();
+
         pauseMenu.style.display = "flex";
         backgroundMusic.pause();
+
         stopWalkCycle();
 
         if (jumpTimerId) {
             clearInterval(jumpTimerId);
             jumpTimerId = null;
         }
+
     } else {
         icon.className = "hgi hgi-stroke hgi-rounded hgi-pause";
+
         gameInterval = setInterval(updateScoreAndTime, 1000);
 
-        const remaining = Math.max(0, pausedObstacleTimeRemaining - (Date.now() - pauseTime));
+        const remaining = Math.max(
+            0,
+            pausedObstacleTimeRemaining - (Date.now() - pauseTime)
+        );
+
         obstacleTimeout = setTimeout(createObstacle, remaining);
 
-        pauseTime = null;
         pauseMenu.style.display = "none";
 
         if (!isMuted) backgroundMusic.play().catch(() => { });
@@ -198,23 +246,28 @@ function togglePause() {
     }
 }
 
+// Score
 function updateScoreAndTime() {
-    if (!isGameOver && isStarted && !isPaused) {
-        timeElapsed++;
-        score += 10;
+    if (isGameOver || !isStarted || isPaused) return;
 
-        timerDisplay.innerText = timeElapsed;
-        scoreDisplay.innerText = score;
+    timeElapsed++;
+    score += 10;
 
-        if (score % 100 === 0) {
-            gameSpeed += 1.5;
-            if (obstacleInterval > 700) obstacleInterval -= 200;
-        }
+    timerDisplay.innerText = timeElapsed;
+    scoreDisplay.innerText = score;
+
+    if (score % 100 === 0) {
+        gameSpeed += 1.5;
+        if (obstacleInterval > 700) obstacleInterval -= 200;
     }
 }
 
+// Jump
 function jump() {
     isJumping = true;
+
+    player.classList.add("jumping");
+
     setPlayerState('jump');
 
     let position = 0;
@@ -230,6 +283,9 @@ function jump() {
             clearInterval(jumpTimerId);
             jumpTimerId = null;
             isJumping = false;
+
+            player.classList.remove("jumping");
+
             setPlayerState('walk-a');
             startWalkCycle();
         }
@@ -241,31 +297,7 @@ function jump() {
     jumpSound.play().catch(() => { });
 }
 
-function continueJump() {
-    const currentBottom = parseInt(player.style.bottom) || 0;
-    let position = currentBottom;
-    let velocity = -Math.sqrt(2 * gravity * Math.max(0, currentBottom));
-
-    setPlayerState('jump');
-
-    jumpTimerId = setInterval(() => {
-        if (isGameOver || isPaused) return;
-
-        position += velocity;
-        velocity -= gravity;
-
-        if (position <= 0) {
-            clearInterval(jumpTimerId);
-            jumpTimerId = null;
-            isJumping = false;
-            setPlayerState('walk-a');
-            startWalkCycle();
-        }
-
-        player.style.bottom = position + "px";
-    }, 20);
-}
-
+// Obstacles
 function createObstacle() {
     if (isGameOver || !isStarted) return;
 
@@ -317,6 +349,7 @@ function createObstacle() {
     obstacleTimeout = setTimeout(createObstacle, randomTime);
 }
 
+// Damage
 function takeDamage() {
     lives--;
 
@@ -326,6 +359,7 @@ function takeDamage() {
     damageSound.play().catch(() => { });
 
     setPlayerState('hit');
+
     setTimeout(() => {
         if (!isJumping) setPlayerState('walk-a');
     }, 400);
@@ -344,6 +378,7 @@ function takeDamage() {
     }, 1500);
 }
 
+// Game Over
 function gameOver() {
     isGameOver = true;
     isStarted = false;
