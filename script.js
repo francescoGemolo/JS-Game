@@ -53,6 +53,9 @@ let pauseTime = null;
 let walkFrame = false;
 let walkInterval = null;
 
+let jumpPosition = 0;
+let jumpVelocity = 0;
+
 const l1 = document.querySelector('.layerBg');
 const l2 = document.querySelector('.layer2');
 const l3 = document.querySelector('.layer3');
@@ -252,8 +255,11 @@ function togglePause() {
 
         if (!isMuted) backgroundMusic.play().catch(() => { });
 
-        if (isJumping) continueJump();
-        else startWalkCycle();
+        if (isJumping) {
+            jumpTimerId = setInterval(jumpStep, 20);
+        } else {
+            startWalkCycle();
+        }
     }
 }
 
@@ -274,35 +280,35 @@ function updateScoreAndTime() {
 }
 
 // Jump
+function jumpStep() {
+    if (isGameOver || isPaused) return;
+
+    jumpPosition += jumpVelocity;
+    jumpVelocity -= gravity;
+
+    if (jumpPosition <= 0) {
+        clearInterval(jumpTimerId);
+        jumpTimerId = null;
+        isJumping = false;
+        jumpPosition = 0;
+
+        player.classList.remove("jumping");
+        setPlayerState('walk-a');
+        startWalkCycle();
+    }
+
+    player.style.bottom = jumpPosition + "px";
+}
+
 function jump() {
     isJumping = true;
+    jumpPosition = 0;
+    jumpVelocity = 15;
 
     player.classList.add("jumping");
-
     setPlayerState('jump');
 
-    let position = 0;
-    let velocity = 15;
-
-    jumpTimerId = setInterval(() => {
-        if (isGameOver || isPaused) return;
-
-        position += velocity;
-        velocity -= gravity;
-
-        if (position <= 0) {
-            clearInterval(jumpTimerId);
-            jumpTimerId = null;
-            isJumping = false;
-
-            player.classList.remove("jumping");
-
-            setPlayerState('walk-a');
-            startWalkCycle();
-        }
-
-        player.style.bottom = position + "px";
-    }, 20);
+    jumpTimerId = setInterval(jumpStep, 20);
 
     jumpSound.currentTime = 0;
     jumpSound.play().catch(() => { });
