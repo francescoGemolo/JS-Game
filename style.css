@@ -182,7 +182,7 @@ button:active {
 .footer-game {
     width: 600px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem 0.75rem;
@@ -211,6 +211,13 @@ button:active {
 .footer-game a:hover {
     color: var(--color-text);
     background-color: rgba(255, 255, 255, 0.07);
+}
+
+.footer-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 @media (max-width: 640px) {

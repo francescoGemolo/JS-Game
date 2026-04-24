@@ -9,6 +9,7 @@ const startBtn = document.getElementById("start-btn");
 const restartBtn = document.getElementById("restart-btn");
 const resumeBtn = document.getElementById("resume-btn");
 const pauseBtn = document.getElementById("pause-btn");
+const volumeBtn = document.getElementById("volume-btn");
 
 const timerDisplay = document.getElementById("timer");
 const scoreDisplay = document.getElementById("score");
@@ -19,35 +20,32 @@ const hearts = [
     document.getElementById("heart3")
 ];
 
-let isMuted = false;
 const jumpSound = new Audio('sound/jump-sound.wav');
-const damageSound = new Audio('sound/hit-sound.wav'); 
+const damageSound = new Audio('sound/hit-sound.wav');
 const backgroundMusic = new Audio('sound/bg-music.mp3');
 
 backgroundMusic.preload = 'auto';
 backgroundMusic.loop = true;
-backgroundMusic.volume = 0.3;
-jumpSound.volume = 0.6;
-damageSound.volume = 0.8;
+backgroundMusic.volume = 0.2;
+jumpSound.volume = 0.4;
+damageSound.volume = 0.6;
 
+let isMuted = false;
 let isJumping = false;
 let isGameOver = false;
 let isStarted = false;
 let isPaused = false;
+let isInvulnerable = false;
 
 let gravity = 1;
 let obstacleTimeout;
+let gameInterval;
 
 let score = 0;
 let timeElapsed = 0;
-let gameInterval;
-
 let lives = 3;
-let isInvulnerable = false;
-
 let gameSpeed = 10;
 let obstacleInterval = 2500;
-
 let pausedObstacleTimeRemaining = 0;
 let pauseTime = null;
 
@@ -60,6 +58,27 @@ resumeBtn.addEventListener("click", () => {
 
 pauseBtn.addEventListener("click", () => {
     if (isStarted && !isGameOver) togglePause();
+});
+
+volumeBtn.addEventListener("click", () => {
+    isMuted = !isMuted;
+    const icon = volumeBtn.querySelector("i");
+
+    if (isMuted) {
+        backgroundMusic.pause();
+        jumpSound.volume = 0;
+        damageSound.volume = 0;
+        icon.className = "hgi hgi-stroke hgi-rounded hgi-volume-off";
+        volumeBtn.setAttribute("aria-label", "Unmute");
+    } else {
+        jumpSound.volume = 0.4;
+        damageSound.volume = 0.6;
+        if (isStarted && !isGameOver && !isPaused) {
+            backgroundMusic.play().catch(() => { });
+        }
+        icon.className = "hgi hgi-stroke hgi-rounded hgi-volume-high";
+        volumeBtn.setAttribute("aria-label", "Mute");
+    }
 });
 
 document.addEventListener("keydown", (event) => {
@@ -85,16 +104,13 @@ function initGame() {
     isStarted = true;
     isJumping = false;
     isPaused = false;
+    isInvulnerable = false;
 
     score = 0;
     timeElapsed = 0;
     lives = 3;
-
-    isInvulnerable = false;
-
     gameSpeed = 10;
     obstacleInterval = 2500;
-
     pausedObstacleTimeRemaining = 0;
     pauseTime = null;
 
@@ -122,7 +138,7 @@ function initGame() {
     clearTimeout(obstacleTimeout);
     obstacleTimeout = setTimeout(createObstacle, 1000);
 
-    backgroundMusic.play();
+    if (!isMuted) backgroundMusic.play().catch(() => { });
 }
 
 function togglePause() {
@@ -131,21 +147,19 @@ function togglePause() {
 
     if (isPaused) {
         icon.className = "hgi hgi-stroke hgi-rounded hgi-play";
-
         clearInterval(gameInterval);
         clearTimeout(obstacleTimeout);
         pauseTime = Date.now();
         pauseMenu.style.display = "flex";
+        backgroundMusic.pause();
     } else {
         icon.className = "hgi hgi-stroke hgi-rounded hgi-pause";
-
         gameInterval = setInterval(updateScoreAndTime, 1000);
-
         const remaining = Math.max(0, pausedObstacleTimeRemaining - (Date.now() - pauseTime));
         obstacleTimeout = setTimeout(createObstacle, remaining);
-
         pauseTime = null;
         pauseMenu.style.display = "none";
+        if (!isMuted) backgroundMusic.play().catch(() => { });
     }
 }
 
@@ -159,10 +173,7 @@ function updateScoreAndTime() {
 
         if (score % 100 === 0) {
             gameSpeed += 1.5;
-
-            if (obstacleInterval > 700) {
-                obstacleInterval -= 200;
-            }
+            if (obstacleInterval > 700) obstacleInterval -= 200;
         }
     }
 }
@@ -195,10 +206,8 @@ function jump() {
         player.style.bottom = position + "px";
     }, 20);
 
-    if (!isMuted) {
-        jumpSound.currentTime = 0;
-        jumpSound.play();
-    }
+    jumpSound.currentTime = 0;
+    jumpSound.play().catch(() => { });
 }
 
 function createObstacle() {
@@ -225,10 +234,9 @@ function createObstacle() {
         if (isPaused) return;
 
         obstaclePosition -= gameSpeed;
-
         obstacle.style.left = obstaclePosition + "px";
 
-        let playerBottom = parseInt(getComputedStyle(player).bottom);
+        const playerBottom = parseInt(getComputedStyle(player).bottom);
 
         if (
             obstaclePosition > (50 - randomWidth) &&
@@ -244,8 +252,8 @@ function createObstacle() {
         }
     }, 20);
 
-    let minTime = Math.max(400, obstacleInterval - 500);
-    let randomTime = Math.random() * (obstacleInterval - minTime) + minTime;
+    const minTime = Math.max(400, obstacleInterval - 500);
+    const randomTime = Math.random() * (obstacleInterval - minTime) + minTime;
 
     pausedObstacleTimeRemaining = randomTime;
 
@@ -258,22 +266,21 @@ function takeDamage() {
 
     if (hearts[lives]) hearts[lives].style.display = "none";
 
+    damageSound.currentTime = 0;
+    damageSound.play().catch(() => { });
+
     if (lives <= 0) {
         gameOver();
-    } else {
-        isInvulnerable = true;
-        player.classList.add("invulnerable");
-
-        setTimeout(() => {
-            isInvulnerable = false;
-            player.classList.remove("invulnerable");
-        }, 1500);
+        return;
     }
 
-    if (!isMuted) {
-        damageSound.currentTime = 0;
-        damageSound.play();
-    }
+    isInvulnerable = true;
+    player.classList.add("invulnerable");
+
+    setTimeout(() => {
+        isInvulnerable = false;
+        player.classList.remove("invulnerable");
+    }, 1500);
 }
 
 function gameOver() {
@@ -281,20 +288,11 @@ function gameOver() {
     isStarted = false;
 
     clearTimeout(obstacleTimeout);
+    clearInterval(gameInterval);
+
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
 
     finalScoreValue.innerText = `Your Score: ${score}`;
     gameOverMenu.style.display = "flex";
-}
-//funzione per mutare tutti i suoni da inserire nel event listener
-function muteMusic() {
-    isMuted = !isMuted;
-
-    if (isMuted) {
-        backgroundMusic.pause();
-    } else {
-        if (isStarted && !isGameOver) {
-            backgroundMusic.play().catch(err => console.log("Audio in attesa di interazione"));
-        }
-    }
-    return isMuted;
 }
