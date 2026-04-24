@@ -123,6 +123,7 @@ document.addEventListener("touchstart", (event) => {
 }, { passive: false });
 
 function initGame() {
+    
     isGameOver = false;
     isStarted = true;
     isJumping = false;
@@ -165,6 +166,8 @@ function initGame() {
     obstacleTimeout = setTimeout(createObstacle, 1000);
 
     if (!isMuted) backgroundMusic.play().catch(() => { });
+
+    animate();
 }
 
 function togglePause() {
@@ -336,4 +339,26 @@ function gameOver() {
 
     finalScoreValue.innerText = `Your Score: ${score}`;
     gameOverMenu.style.display = "flex";
+}
+
+const l1 = document.querySelector('.layerBg');
+const l2 = document.querySelector('.layer2');
+const l3 = document.querySelector('.layer3');
+
+let posX = 0;
+const bgSpeed = 2;
+
+function moveBackground() {
+    posX -= bgSpeed;
+
+    l1.style.backgroundPositionX = (posX * 0.1) + "px";
+    l2.style.backgroundPositionX = (posX * 0.4) + "px";
+    l3.style.backgroundPositionX = (posX * 0.6) + "px";
+}
+
+function animate() {
+    if (!isGameOver && isStarted && !isPaused) {
+        moveBackground();
+    }
+    requestAnimationFrame(animate);
 }
