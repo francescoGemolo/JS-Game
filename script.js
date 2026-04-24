@@ -20,9 +20,9 @@ const hearts = [
     document.getElementById("heart3")
 ];
 
-const jumpSound = new Audio('sound/jump-sound.wav');
-const damageSound = new Audio('sound/hit-sound.wav');
-const backgroundMusic = new Audio('sound/bg-music.mp3');
+const jumpSound = new Audio('assets/sound/jump-sound.wav');
+const damageSound = new Audio('assets/sound/hit-sound.wav');
+const backgroundMusic = new Audio('assets/sound/bg-music.mp3');
 
 backgroundMusic.preload = 'auto';
 backgroundMusic.loop = true;
