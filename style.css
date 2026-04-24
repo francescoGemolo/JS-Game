@@ -81,6 +81,8 @@ body {
     position: relative;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    touch-action: manipulation;
+    user-select: none;
 }
 
 .player {
@@ -250,6 +252,45 @@ button:active {
     justify-content: center;
     align-items: center;
     gap: 1rem;
+}
+
+.rotate-screen-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-surface);
+    color: white;
+    z-index: 10000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.rotate-screen-overlay{
+    font-size: 1.5rem;
+}
+
+@media screen and (orientation: portrait) {
+    .rotate-screen-overlay {
+        display: flex;
+    }
+    
+    .game-container, #ui-container {
+        display: none;
+    }
+}
+
+@media screen and (orientation: landscape) {
+    .game-container {
+        display: block;
+        width: 600px;
+        height: 200px;
+        max-width: none;
+    }
 }
 
 @media (max-width: 640px) {

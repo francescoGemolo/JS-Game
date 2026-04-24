@@ -139,6 +139,17 @@ volumeBtn.addEventListener("click", () => {
     }
 });
 
+gameContainer.addEventListener("click", (event) =>{
+   if (!isStarted) {
+        initGame();
+    } else if (isPaused) {
+        togglePause();
+    } else if (!isJumping && !isGameOver) {
+        jump();
+    }
+    console.log('mobile jumping')
+});
+
 // Input
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
@@ -149,7 +160,7 @@ document.addEventListener("keydown", (event) => {
         else if (!isJumping && !isGameOver) jump();
     }
 });
-
+/*
 document.addEventListener("touchstart", (event) => {
     event.preventDefault();
 
@@ -157,7 +168,7 @@ document.addEventListener("touchstart", (event) => {
     else if (isPaused) togglePause();
     else if (!isJumping && !isGameOver) jump();
 }, { passive: false });
-
+*/
 // Game Logic
 function initGame() {
     isGameOver = false;
