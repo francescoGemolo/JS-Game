@@ -164,14 +164,6 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-document.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-
-    if (!isStarted) initGame();
-    else if (isPaused) togglePause();
-    else if (!isJumping && !isGameOver) jump();
-}, { passive: false });
-
 // Game Logic
 function initGame() {
     isGameOver = false;
